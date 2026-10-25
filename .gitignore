@@ -38,3 +38,8 @@ Thumbs.db
 # Exports temporaires
 *.zip
 *.tar.gz
+
+# Rapports d'outils (artefacts locaux)
+semgrep-*.json
+semgrep-*.err
+*.sarif
