@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+  }
+}
+
+@layer components {
+  /* Case à cocher des tâches : couleur pilotée par le rôle sémantique `accent`
+     (aucune couleur en dur). La variable CSS est injectée par le ThemeProvider. */
+  .task-checkbox {
+    accent-color: rgb(var(--ds-accent));
+  }
+}

@@ -1,0 +1,40 @@
+# Dépendances
+node_modules/
+.pnp
+.pnp.js
+
+# SECRETS — ne jamais versionner
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Builds
+dist/
+dist-export/
+build/
+*.tsbuildinfo
+
+# Vercel
+.vercel
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Bases locales
+*.db
+*.sqlite
+*.sqlite3
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Exports temporaires
+*.zip
+*.tar.gz

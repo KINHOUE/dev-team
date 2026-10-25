@@ -1,0 +1,119 @@
+// Prisma schema — Todo App
+// PostgreSQL (Neon) — compatible dev et production.
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  // Devise du compte (réglage). Les montants sont stockés en centimes.
+  currency     String   @default("XOF")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tasks     Task[]
+  categories Category[]
+  expenses  Expense[]
+  budgets   Budget[]
+  forecasts Forecast[]
+}
+
+model Task {
+  id        String    @id @default(cuid())
+  title     String
+  done      Boolean   @default(false)
+  dueAt     DateTime?
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  // Clé d'icône interprétée côté client (food, transport, home, …)
+  icon      String   @default("tag")
+  color     String?
+  createdAt DateTime @default(now())
+
+  expenses  Expense[]
+  budgets   Budget[]
+  forecasts Forecast[]
+
+  @@unique([userId, name])
+  @@index([userId])
+}
+
+model Expense {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  // Montant en centimes (entier, jamais de flottant pour l'argent)
+  amountCents Int
+  date        DateTime
+  note        String?
+  // Origine de la saisie : "manual" ou "voice"
+  source      String    @default("manual")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, date])
+  @@index([userId, categoryId])
+}
+
+model Budget {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Format "YYYY-MM"
+  month       String
+  // null = budget global du mois ; sinon budget de cette catégorie
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  amountCents Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, month])
+}
+
+model Forecast {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Format "YYYY-MM"
+  month       String
+  // null = prévision globale du mois ; sinon prévision de cette catégorie
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  amountCents Int
+  note        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, month])
+}
+
+// Store distribué du rate limiting : un compteur par clé (IP + bucket) avec
+// fenêtre glissante (`resetAt`). Incrément atomique via INSERT … ON CONFLICT
+// (voir src/middleware/rateLimitStore.ts). Partagé entre instances serverless.
+model RateLimit {
+  key     String   @id
+  count   Int      @default(0)
+  resetAt DateTime
+}

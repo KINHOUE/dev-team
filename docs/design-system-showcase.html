@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Design System — multi-thème</title>
+<style>
+  :root {
+    --ds-background: 9 9 11;
+    --ds-surface: 24 24 27;
+    --ds-surface-raised: 31 31 35;
+    --ds-text: 244 244 245;
+    --ds-text-muted: 161 161 170;
+    --ds-border: 39 39 42;
+    --ds-border-strong: 63 63 70;
+    --ds-accent: 99 102 241;
+    --ds-accent-hover: 129 140 248;
+    --ds-accent-muted: 165 180 252;
+    --ds-accent-soft: 30 27 75;
+    --ds-accent-contrast: 255 255 255;
+    --ds-success: 34 197 94;
+    --ds-success-soft: 5 46 22;
+    --ds-warning: 245 158 11;
+    --ds-warning-soft: 69 26 3;
+    --ds-danger: 239 68 68;
+    --ds-danger-soft: 69 10 10;
+    --ds-info: 59 130 246;
+    --ds-info-soft: 23 37 84;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px;
+    background: rgb(var(--ds-background));
+    color: rgb(var(--ds-text));
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.25s, color 0.25s;
+  }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .sub { color: rgb(var(--ds-text-muted)); font-size: 14px; margin: 0 0 24px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: rgb(var(--ds-text-muted)); margin: 28px 0 12px; }
+
+  /* Sélecteur de thème */
+  .picker { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .chip {
+    height: 34px; padding: 0 14px; border-radius: 9999px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: 1px solid rgb(var(--ds-border));
+    background: rgb(var(--ds-surface)); color: rgb(var(--ds-text-muted));
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: rgb(var(--ds-border-strong)); }
+  .chip.active {
+    background: rgb(var(--ds-accent)); color: rgb(var(--ds-accent-contrast));
+    border-color: rgb(var(--ds-accent));
+  }
+  .chip .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: -1px; }
+
+  .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+
+  /* Boutons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 40px; padding: 0 16px; border-radius: 10px; font-size: 14px; font-weight: 500;
+    cursor: pointer; border: 1px solid transparent; transition: all 0.15s;
+  }
+  .btn.primary { background: rgb(var(--ds-accent)); color: rgb(var(--ds-accent-contrast)); }
+  .btn.primary:hover { background: rgb(var(--ds-accent-hover)); }
+  .btn.secondary { background: rgb(var(--ds-surface-raised)); color: rgb(var(--ds-text)); border-color: rgb(var(--ds-border)); }
+  .btn.secondary:hover { border-color: rgb(var(--ds-border-strong)); }
+  .btn.ghost { background: transparent; color: rgb(var(--ds-text)); }
+  .btn.ghost:hover { background: rgb(var(--ds-surface-raised)); }
+  .btn.danger { background: rgb(var(--ds-danger-soft)); color: rgb(var(--ds-danger)); }
+  .btn.danger:hover { filter: brightness(1.15); }
+  .btn.sm { height: 32px; padding: 0 12px; font-size: 14px; }
+  .btn.lg { height: 48px; padding: 0 24px; font-size: 16px; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 9999px; padding: 2px 10px; font-size: 12px; font-weight: 500; border: 1px solid; }
+  .badge.neutral { background: rgb(var(--ds-surface-raised)); color: rgb(var(--ds-text-muted)); border-color: rgb(var(--ds-border)); }
+  .badge.accent  { background: rgb(var(--ds-accent-soft)); color: rgb(var(--ds-accent-muted)); border-color: rgb(var(--ds-accent-muted) / 0.3); }
+  .badge.success { background: rgb(var(--ds-success-soft)); color: rgb(var(--ds-success)); border-color: rgb(var(--ds-success) / 0.3); }
+  .badge.warning { background: rgb(var(--ds-warning-soft)); color: rgb(var(--ds-warning)); border-color: rgb(var(--ds-warning) / 0.3); }
+  .badge.danger  { background: rgb(var(--ds-danger-soft)); color: rgb(var(--ds-danger)); border-color: rgb(var(--ds-danger) / 0.3); }
+  .badge.info    { background: rgb(var(--ds-info-soft)); color: rgb(var(--ds-info)); border-color: rgb(var(--ds-info) / 0.3); }
+
+  /* Card & input */
+  .card { background: rgb(var(--ds-surface)); border: 1px solid rgb(var(--ds-border)); border-radius: 14px; padding: 20px; max-width: 360px; }
+  .card h3 { margin: 0 0 8px; font-size: 15px; }
+  .card p { margin: 0; color: rgb(var(--ds-text-muted)); font-size: 14px; line-height: 1.6; }
+  .field { display: flex; flex-direction: column; gap: 6px; max-width: 360px; }
+  .field label { font-size: 14px; font-weight: 500; }
+  .field input {
+    height: 40px; border-radius: 10px; padding: 0 12px; font-size: 14px;
+    background: rgb(var(--ds-surface)); color: rgb(var(--ds-text)); border: 1px solid rgb(var(--ds-border));
+  }
+  .field input:focus { outline: none; border-color: rgb(var(--ds-accent)); box-shadow: 0 0 0 2px rgb(var(--ds-accent) / 0.4); }
+  .field input::placeholder { color: rgb(var(--ds-text-muted)); }
+  .field input.error { border-color: rgb(var(--ds-danger)); }
+  .field .msg { font-size: 12px; color: rgb(var(--ds-danger)); }
+
+  /* Typographie */
+  .type-row { display: flex; align-items: baseline; gap: 16px; padding: 6px 0; border-bottom: 1px solid rgb(var(--ds-border)); }
+  .type-row .size { width: 90px; font-size: 12px; color: rgb(var(--ds-text-muted)); font-family: monospace; }
+</style>
+</head>
+<body>
+  <h1>@dev-team/design-system</h1>
+  <p class="sub">Tokens sémantiques · multi-thème · adaptable par projet — change de thème pour voir les composants se réadapter.</p>
+
+  <h2>Thèmes</h2>
+  <div class="picker" id="picker"></div>
+
+  <h2>Boutons</h2>
+  <div class="row">
+    <button class="btn primary">Primaire</button>
+    <button class="btn secondary">Secondaire</button>
+    <button class="btn ghost">Fantôme</button>
+    <button class="btn danger">Danger</button>
+  </div>
+  <div class="row" style="margin-top:12px">
+    <button class="btn primary sm">Petit</button>
+    <button class="btn primary">Moyen</button>
+    <button class="btn primary lg">Grand</button>
+  </div>
+
+  <h2>Badges</h2>
+  <div class="row">
+    <span class="badge neutral">Neutre</span>
+    <span class="badge accent">Accent</span>
+    <span class="badge success">Succès</span>
+    <span class="badge warning">Attention</span>
+    <span class="badge danger">Erreur</span>
+    <span class="badge info">Info</span>
+  </div>
+
+  <h2>Carte &amp; champ</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Titre de la carte</h3>
+      <p>Ces composants ne contiennent aucune couleur en dur : ils consomment des rôles sémantiques (--ds-*) qui changent avec le thème.</p>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="vous@exemple.com" />
+    </div>
+    <div class="field">
+      <label for="pwd">Mot de passe</label>
+      <input id="pwd" type="password" class="error" value="1234" />
+      <span class="msg">Le mot de passe est trop court.</span>
+    </div>
+  </div>
+
+  <h2>Typographie</h2>
+  <div style="max-width:520px">
+    <div class="type-row"><span class="size">12 / 16</span><span style="font-size:12px">xs — petit texte</span></div>
+    <div class="type-row"><span class="size">14 / 20</span><span style="font-size:14px">sm — texte courant</span></div>
+    <div class="type-row"><span class="size">16 / 24</span><span style="font-size:16px">base — contenu</span></div>
+    <div class="type-row"><span class="size">20 / 28</span><span style="font-size:20px">xl — sous-titre</span></div>
+    <div class="type-row"><span class="size">30 / 36</span><span style="font-size:30px;font-weight:600">3xl — titre</span></div>
+  </div>
+
+<script>
+  const THEMES = {
+    dark:    { mode: 'dark',  label: 'Dark · Indigo',  dot: '#6366f1', vars: { '--ds-accent':'99 102 241', '--ds-accent-hover':'129 140 248', '--ds-accent-muted':'165 180 252', '--ds-accent-soft':'30 27 75', '--ds-accent-contrast':'255 255 255', '--ds-background':'9 9 11','--ds-surface':'24 24 27','--ds-surface-raised':'31 31 35','--ds-text':'244 244 245','--ds-text-muted':'161 161 170','--ds-border':'39 39 42','--ds-border-strong':'63 63 70','--ds-success':'34 197 94','--ds-success-soft':'5 46 22','--ds-warning':'245 158 11','--ds-warning-soft':'69 26 3','--ds-danger':'239 68 68','--ds-danger-soft':'69 10 10','--ds-info':'59 130 246','--ds-info-soft':'23 37 84' } },
+    ocean:   { mode: 'dark',  label: 'Ocean · Cyan',   dot: '#06b6d4', vars: { '--ds-accent':'6 182 212', '--ds-accent-hover':'34 211 238', '--ds-accent-muted':'103 232 249', '--ds-accent-soft':'8 51 68', '--ds-accent-contrast':'255 255 255', '--ds-background':'9 9 11','--ds-surface':'24 24 27','--ds-surface-raised':'31 31 35','--ds-text':'244 244 245','--ds-text-muted':'161 161 170','--ds-border':'39 39 42','--ds-border-strong':'63 63 70','--ds-success':'34 197 94','--ds-success-soft':'5 46 22','--ds-warning':'245 158 11','--ds-warning-soft':'69 26 3','--ds-danger':'239 68 68','--ds-danger-soft':'69 10 10','--ds-info':'59 130 246','--ds-info-soft':'23 37 84' } },
+    forest:  { mode: 'dark',  label: 'Forest · Emerald', dot: '#10b981', vars: { '--ds-accent':'16 185 129', '--ds-accent-hover':'52 211 153', '--ds-accent-muted':'110 231 183', '--ds-accent-soft':'2 44 34', '--ds-accent-contrast':'255 255 255', '--ds-background':'9 9 11','--ds-surface':'24 24 27','--ds-surface-raised':'31 31 35','--ds-text':'244 244 245','--ds-text-muted':'161 161 170','--ds-border':'39 39 42','--ds-border-strong':'63 63 70','--ds-success':'34 197 94','--ds-success-soft':'5 46 22','--ds-warning':'245 158 11','--ds-warning-soft':'69 26 3','--ds-danger':'239 68 68','--ds-danger-soft':'69 10 10','--ds-info':'59 130 246','--ds-info-soft':'23 37 84' } },
+    sunset:  { mode: 'dark',  label: 'Sunset · Amber',  dot: '#f59e0b', vars: { '--ds-accent':'245 158 11', '--ds-accent-hover':'251 191 36', '--ds-accent-muted':'252 211 77', '--ds-accent-soft':'69 26 3', '--ds-accent-contrast':'255 255 255', '--ds-background':'9 9 11','--ds-surface':'24 24 27','--ds-surface-raised':'31 31 35','--ds-text':'244 244 245','--ds-text-muted':'161 161 170','--ds-border':'39 39 42','--ds-border-strong':'63 63 70','--ds-success':'34 197 94','--ds-success-soft':'5 46 22','--ds-warning':'245 158 11','--ds-warning-soft':'69 26 3','--ds-danger':'239 68 68','--ds-danger-soft':'69 10 10','--ds-info':'59 130 246','--ds-info-soft':'23 37 84' } },
+    rose:    { mode: 'dark',  label: 'Rose',           dot: '#f43f5e', vars: { '--ds-accent':'244 63 94', '--ds-accent-hover':'251 113 133', '--ds-accent-muted':'253 164 175', '--ds-accent-soft':'76 5 25', '--ds-accent-contrast':'255 255 255', '--ds-background':'9 9 11','--ds-surface':'24 24 27','--ds-surface-raised':'31 31 35','--ds-text':'244 244 245','--ds-text-muted':'161 161 170','--ds-border':'39 39 42','--ds-border-strong':'63 63 70','--ds-success':'34 197 94','--ds-success-soft':'5 46 22','--ds-warning':'245 158 11','--ds-warning-soft':'69 26 3','--ds-danger':'239 68 68','--ds-danger-soft':'69 10 10','--ds-info':'59 130 246','--ds-info-soft':'23 37 84' } },
+    light:   { mode: 'light', label: 'Light · Indigo',  dot: '#4f46e5', vars: { '--ds-accent':'79 70 229', '--ds-accent-hover':'67 56 202', '--ds-accent-muted':'67 56 202', '--ds-accent-soft':'224 231 255', '--ds-accent-contrast':'255 255 255', '--ds-background':'250 250 250','--ds-surface':'255 255 255','--ds-surface-raised':'255 255 255','--ds-text':'24 24 27','--ds-text-muted':'113 113 122','--ds-border':'228 228 231','--ds-border-strong':'212 212 216','--ds-success':'22 163 74','--ds-success-soft':'220 252 231','--ds-warning':'217 119 6','--ds-warning-soft':'254 243 199','--ds-danger':'220 38 38','--ds-danger-soft':'254 226 226','--ds-info':'37 99 235','--ds-info-soft':'219 234 254' } },
+  };
+
+  const picker = document.getElementById('picker');
+  function applyTheme(name) {
+    const t = THEMES[name];
+    const root = document.documentElement;
+    Object.entries(t.vars).forEach(([k, v]) => root.style.setProperty(k, v));
+    root.setAttribute('data-theme', t.mode);
+    [...picker.children].forEach((c) => c.classList.toggle('active', c.dataset.theme === name));
+  }
+  Object.entries(THEMES).forEach(([name, t]) => {
+    const c = document.createElement('button');
+    c.className = 'chip';
+    c.dataset.theme = name;
+    c.innerHTML = '<span class="dot" style="background:' + t.dot + '"></span>' + t.label;
+    c.onclick = () => applyTheme(name);
+    picker.appendChild(c);
+  });
+  applyTheme('dark');
+</script>
+</body>
+</html>
